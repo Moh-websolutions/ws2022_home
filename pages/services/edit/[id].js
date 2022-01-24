@@ -9,7 +9,7 @@ import axios from 'axios'
   
 
 export default function EditServices({ service, allCasestudies }) {
-    console.log(service.data.attributes.singleservices.data);
+    console.log(service.data.attributes.thumbnail.data.attributes.url);
     const [file, setFile] = useState(false);
     const [response, setResponse] = useState({});
     // const postData = {
@@ -20,9 +20,10 @@ export default function EditServices({ service, allCasestudies }) {
     const [ values, setValues ] = useState({
         title: service.data.attributes.title,
         content: service.data.attributes.content,
+        thumbnail: [],   // this is the url of the thumbnail of the service
         singleservices: []
     });
-    const { title, content, singleservices } = values;
+    const { title, content, singleservices,thumbnail } = values;
 
     const handleInputChange = (event) => {
       setFile(event.target.files[0]);
@@ -60,7 +61,8 @@ export default function EditServices({ service, allCasestudies }) {
         <h1>add service</h1>
 
         <ToastContainer />
-        <input type="file" onChange={handleInputChange} />
+        <input type="file"  onChange={handleInputChange} />
+        <img src={service.data.attributes.thumbnail.data.attributes.url} width="100"  />
       <br />
       <br />
       <br />
@@ -74,6 +76,15 @@ export default function EditServices({ service, allCasestudies }) {
             value={title}
             onChange={ handleChange }
             />
+            <input 
+            className="form-control"
+            name="thumbnail"
+            type="text"
+            id="thumbnail"
+            value={thumbnail}
+            onChange={ handleChange }
+            />
+
             <label htmlFor="content">En title</label>
             <textarea 
             className="form-control"

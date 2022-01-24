@@ -94,14 +94,16 @@ export default function AddServiceNew({services}) {
         e.preventDefault();
     
         const request = new XMLHttpRequest();
-    
+        //wait 3 second before POSTing
+
         request.open('POST', 'http://localhost:1337/api/upload');
-    
+        //request.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('token')}`);    
         request.send(new FormData(formElement));
-      
+
         request.onreadystatechange = (e) => {
           if (request.readyState === 4) {
-        
+         
+
                 if (request.status === 200) {
                 const response = JSON.parse(request.responseText);
                 setResponse(response);
@@ -150,8 +152,8 @@ export default function AddServiceNew({services}) {
 <form onSubmit={handleSubmit}>
 <img src={createObjectURL} />
    {/* <input type="file" name="files" /> */}
-    <input type="text" name="title" value={title} onChange={handleChange} />
-    <input type="text" name="content" value={content} onChange={handleChange} />
+    <input type="text"  placeholder='title' name="title" value={title} onChange={handleChange} />
+    <input type="text" placeholder='content' name="content" value={content} onChange={handleChange} />
 <br/>
 <br/>
   <input type="file" name="files" onChange={uploadToClient} />

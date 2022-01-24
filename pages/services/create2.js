@@ -8,8 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios'
   
 
-export default function EditServices({ service, allCasestudies }) {
-    console.log(service.data.attributes.singleservices.data);
+export default function createServices({ allCasestudies }) {
     const [file, setFile] = useState(false);
     const [response, setResponse] = useState({});
     // const postData = {
@@ -18,8 +17,8 @@ export default function EditServices({ service, allCasestudies }) {
     //   allCasestudies: []
     // };
     const [ values, setValues ] = useState({
-        title: service.data.attributes.title,
-        content: service.data.attributes.content,
+        title: "",
+        content: "",
         singleservices: []
     });
     const { title, content, singleservices } = values;
@@ -32,8 +31,8 @@ export default function EditServices({ service, allCasestudies }) {
       formData.append("files.thumbnail", file);
       formData.append("data", JSON.stringify(values));
       axios({
-        method: "put",
-        url: `http://localhost:1337/api/services/${service.data.id}`,
+        method: "post",
+        url: "http://localhost:1337/api/services?populate=*",
         data: formData
       })
         .then(({ data }) => {
@@ -115,29 +114,14 @@ export default function EditServices({ service, allCasestudies }) {
 
 
 
-export async function getServerSideProps(context) {
-    const { id } = context.query;
-    const res = await axios.get(`http://localhost:1337/api/services/${id}?populate=*`);
-    const res2 = await axios.get('http://localhost:1337/api/casestudies');
-
-    const service = res.data;
-    const allCasestudies = res2.data;
-    return {
-        props: {
-            service,
-            allCasestudies
-        }
+createServices.getInitialProps = async ctx => {
+    try {
+      const res = await axios.get('http://localhost:1337/api/casestudies');
+      const allCasestudies = res.data;
+      return { allCasestudies };
+    } catch (err) {
+        console.error(err);
     }
- }
- 
-// EditServices.getInitialProps = async ctx => {
-//     try {
-//       const res = await axios.get('http://localhost:1337/api/casestudies');
-//       const allCasestudies = res.data;
-//       return { allCasestudies };
-//     } catch (err) {
-//         console.error(err);
-//     }
-//   };
+  };
 
  

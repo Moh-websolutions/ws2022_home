@@ -9,6 +9,7 @@ import axios from 'axios'
   
 
 export default function createServices({ allCasestudies }) {
+    console.log(allCasestudies.data);
     const [file, setFile] = useState(false);
     const [response, setResponse] = useState({});
     // const postData = {
@@ -90,7 +91,7 @@ export default function createServices({ allCasestudies }) {
             {
                 allCasestudies.data.map(casestudy => (
                     <div key={casestudy.id}>
-                        <label htmlFor={casestudy.id}>{casestudy.attributes.name }</label>
+                        <label htmlFor={casestudy.id}>{casestudy.attributes.title }</label>
                         <input
                             type="checkbox"
                             checked={singleservices.includes(casestudy.id)}

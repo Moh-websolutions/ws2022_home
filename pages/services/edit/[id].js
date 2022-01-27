@@ -9,30 +9,42 @@ import axios from 'axios'
   
 
 export default function EditServices({ service, allCasestudies }) {
-    console.log(service.data.attributes.thumbnail.data.attributes.url);
+    if(service.data.attributes.thumbnail.data == null) {
+        console.log("null");
+    }
+    // console.log(service.data.attributes.thumbnail.data.attributes.url)
     const [file, setFile] = useState(false);
     const [response, setResponse] = useState({});
-    // const postData = {
-    //   title: "test",
-    //   singleservices: [],
-    //   allCasestudies: []
-    // };
+
     const [ values, setValues ] = useState({
         title: service.data.attributes.title,
         content: service.data.attributes.content,
-        thumbnail: [],   // this is the url of the thumbnail of the service
+        //thumbnail:  [],// this is the url of the thumbnail of the service
         singleservices: []
-    });
+    } );
     const { title, content, singleservices,thumbnail } = values;
-
-    const handleInputChange = (event) => {
-      setFile(event.target.files[0]);
-    };
+    
+            const handleInputChange = (event) => {
+                if(event.target.files[0] !== null) { // if the input file is not null, and its value not empty then set the file to the file
+                    setFile(event.target.files[0]);
+                    setValues({
+                        ...values,
+                        thumbnail: []
+                    })
+                    console.log(event.target.files[0]);
+                }
+            };
+      
+ 
     const upload = (e) => {
+
+
+
       let formData = new FormData();
-      formData.append("files.thumbnail", file);
-      formData.append("data", JSON.stringify(values));
-      axios({
+        formData.append("files.thumbnail", file);
+        formData.append("data", JSON.stringify(values));
+       
+       axios({
         method: "put",
         url: `http://localhost:1337/api/services/${service.data.id}`,
         data: formData
@@ -62,7 +74,14 @@ export default function EditServices({ service, allCasestudies }) {
 
         <ToastContainer />
         <input type="file"  onChange={handleInputChange} />
-        <img src={service.data.attributes.thumbnail.data.attributes.url} width="100"  />
+        
+        {
+            service.data.attributes.thumbnail.data == null ?
+            <input type="file"  onChange={handleInputChange} />
+            :
+            <img src={service.data.attributes.thumbnail.data.attributes.url} width="100"  />
+        }
+        
       <br />
       <br />
       <br />
@@ -76,14 +95,14 @@ export default function EditServices({ service, allCasestudies }) {
             value={title}
             onChange={ handleChange }
             />
-            <input 
+            {/* <input 
             className="form-control"
             name="thumbnail"
             type="text"
             id="thumbnail"
             value={thumbnail}
             onChange={ handleChange }
-            />
+            /> */}
 
             <label htmlFor="content">En title</label>
             <textarea 
@@ -102,7 +121,7 @@ export default function EditServices({ service, allCasestudies }) {
             {
                 allCasestudies.data.map(casestudy => (
                     <div key={casestudy.id}>
-                        <label htmlFor={casestudy.id}>{casestudy.attributes.name }</label>
+                        <label htmlFor={casestudy.id}>{casestudy.attributes.title }</label>
                         <input
                             type="checkbox"
                             checked={singleservices.includes(casestudy.id)}
@@ -117,6 +136,21 @@ export default function EditServices({ service, allCasestudies }) {
             }
             </div>
             <br />
+            <h2>from singleservice</h2>
+            {
+                service.data.attributes.singleservices.data.map(singleservice => (
+                    <div key={singleservice.id}>
+                        <label htmlFor={singleservice.id}>{singleservice.attributes.title }</label>
+                        <input
+                            type="checkbox"
+                            checked={ singleservice.attributes.title == "" ? false : true }
+                            name="singleservices"
+                            id={singleservice.id}
+                             
+                        />
+                    </div>
+                ))
+            }
 
             <button onClick={upload}>Upload File</button>
 

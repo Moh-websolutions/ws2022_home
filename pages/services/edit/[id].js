@@ -9,8 +9,8 @@ import axios from 'axios'
   
 
 export default function EditServices({ service, allCasestudies }) {
-    if(service.data.attributes.thumbnail.data == null) {
-        console.log("null");
+    if(service) {
+        console.log(service.data.attributes.singleservices.data);
     }
     // console.log(service.data.attributes.thumbnail.data.attributes.url)
     const [file, setFile] = useState(false);
@@ -20,26 +20,25 @@ export default function EditServices({ service, allCasestudies }) {
         title: service.data.attributes.title,
         content: service.data.attributes.content,
         //thumbnail:  [],// this is the url of the thumbnail of the service
-        singleservices: []
+        singleservices: service.data.attributes.singleservices.data
+        
     } );
     const { title, content, singleservices,thumbnail } = values;
     
-            const handleInputChange = (event) => {
-                if(event.target.files[0] !== null) { // if the input file is not null, and its value not empty then set the file to the file
-                    setFile(event.target.files[0]);
-                    setValues({
-                        ...values,
-                        thumbnail: []
-                    })
-                    console.log(event.target.files[0]);
-                }
-            };
-      
+    const handleInputChange = (event) => {
+        if(event.target.files[0] !== null) { // if the input file is not null, and its value not empty then set the file to the file
+            setFile(event.target.files[0]);
+            setValues({
+                ...values,
+                thumbnail: [],
+                singleservices: []
+            })
+            console.log(event.target.files[0]);
+        }
+    };
+
  
     const upload = (e) => {
-
-
-
       let formData = new FormData();
         formData.append("files.thumbnail", file);
         formData.append("data", JSON.stringify(values));
@@ -124,10 +123,22 @@ export default function EditServices({ service, allCasestudies }) {
                         <label htmlFor={casestudy.id}>{casestudy.attributes.title }</label>
                         <input
                             type="checkbox"
-                            checked={singleservices.includes(casestudy.id)}
-                            onChange={() => handleChange({
-                                target: { name: 'singleservices', value: singleservices.concat(casestudy.id) }
-                            })}
+                            checked={singleservices.find(single => single.id === casestudy.id)}
+                         
+                            onChange={(e) => {
+                                if(e.target.checked) {
+                                    setValues({
+                                        ...values,
+                                        singleservices: [...values.singleservices, casestudy]
+                                    })
+                                } else {
+                                    setValues({
+                                        ...values,
+                                        singleservices: values.singleservices.filter(single => single.id !== casestudy.id)
+                                    })
+                                }
+
+                            }}
                             name="singleservices"
                             id={casestudy.id}
                         />
@@ -136,21 +147,6 @@ export default function EditServices({ service, allCasestudies }) {
             }
             </div>
             <br />
-            <h2>from singleservice</h2>
-            {
-                service.data.attributes.singleservices.data.map(singleservice => (
-                    <div key={singleservice.id}>
-                        <label htmlFor={singleservice.id}>{singleservice.attributes.title }</label>
-                        <input
-                            type="checkbox"
-                            checked={ singleservice.attributes.title == "" ? false : true }
-                            name="singleservices"
-                            id={singleservice.id}
-                             
-                        />
-                    </div>
-                ))
-            }
 
             <button onClick={upload}>Upload File</button>
 

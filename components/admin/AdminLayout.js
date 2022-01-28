@@ -31,16 +31,14 @@ import {
 
 import Head from 'next/head';
 // import Link from "next/link";
-import { useState } from 'react';
-import { useRouter } from 'next/router'
 import AdminNav from "./AdminNav";
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { StaticRouter } from 'react-router-dom'
 import React from 'react';
  
 export default function AdminLayout({ children, title, description, keywords,navigationContent}) {
-    const router = useRouter();   
-     
+    
+    //SubNavLink act like a Link from Nextjs 
     const CustomLink = React.forwardRef((props, ref) => {
         return (
           <SubNavLink as="a" {...props} innerRef={ref}>
@@ -48,12 +46,11 @@ export default function AdminLayout({ children, title, description, keywords,nav
           </SubNavLink>
         );
       });
-      
       CustomLink.displayName = 'CustomLink';
-      
       CustomLink.propTypes = {
         children: PropTypes.node.isRequired,
       };
+
     return (
         <StaticRouter>
             <Head>
@@ -94,32 +91,34 @@ export default function AdminLayout({ children, title, description, keywords,nav
                  
                 <ThemeProvider theme={lightTheme}>
                     <Box background="neutral100">
-                    <Layout sideNav={<SubNav ariaLabel="Builder sub nav"> 
                     {/* <AdminNav /> */}
-                    <SubNavHeader searchable value={''} onClear={() => {}} onChange={e => {}} label="Builder" searchLabel="Search..." />
+                    <Layout sideNav={<SubNav ariaLabel="Builder sub nav"> 
+                    
+                    <img src="/images/ws-logo-full.svg" width="150" style={{
+                        margin: '25x auto',
+                        position: 'absolute',
+                        top: '25px',
+                        left: '20px',
+                    }}/>
+                    <SubNavHeader searchable value={''} onClear={() => {}} onChange={e => {}} label={``} searchLabel="Search..." />
                     <SubNavSections>
-                    <SubNavSection label="Collection Type" collapsable>
-                   
-                         
-                    </SubNavSection>
-                    <SubNavSection label="Single Type" collapsable>
-             
-
-                        <SubNavSections>
-                            {navigationContent?.map((section, index) => {
-                            return <NavSection title={section.title} pages={section.pages} key={index} />;
-                            })}
-                        </SubNavSections>
-                    </SubNavSection>
+                        <SubNavSection label="Collection Type" collapsable>
+                    
+                            
+                        </SubNavSection>
+                        <SubNavSection label="Single Type" collapsable>
+                
+                        </SubNavSection>
+                        <SubNavSection label="collapsable" collapsable>
+                        
+                            <Link href={`/admin/service`} key={1} passHref>
+                                <CustomLink>Services</CustomLink>
+                            </Link>
+                        
+                        </SubNavSection>
                     </SubNavSections>
 
-                    <SubNavSection label="collapsable" collapsable>
-                     
-                        <Link href={`/service`} key={1} passHref>
-                            <CustomLink>this is name</CustomLink>
-                        </Link>
-                     
-                    </SubNavSection>
+                    
                 </SubNav>}>
  
                 <Box background="neutral100">
@@ -127,6 +126,7 @@ export default function AdminLayout({ children, title, description, keywords,nav
                     <a> Go back</a>
                     </Link>} title="Other CT" subtitle="36 entries found" as="h2" />
                 </Box>
+                
                 <ContentLayout>
                      {children}
                 </ContentLayout>           
@@ -142,19 +142,7 @@ export default function AdminLayout({ children, title, description, keywords,nav
     )
 }
 
-AdminLayout.propTypes = {
-    navigationContent: PropTypes.arrayOf(
-      PropTypes.shape({
-        title: PropTypes.string,
-        pages: PropTypes.arrayOf(
-          PropTypes.shape({
-            link: PropTypes.string,
-            name: PropTypes.string,
-          }),
-        ),
-      }),
-    ),
-  };
+ 
   
 
 {/* default roots for <Head></Head> */}

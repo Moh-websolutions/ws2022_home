@@ -6,9 +6,12 @@ import { useState } from 'react'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios'
-  
 
+import dynamic from 'next/dynamic'
+
+ 
 export default function createServices({ allCasestudies }) {
+ 
     console.log(allCasestudies.data);
     const [file, setFile] = useState(false);
     const [response, setResponse] = useState({});
@@ -53,13 +56,15 @@ export default function createServices({ allCasestudies }) {
     }
  
  
-
     return (
+      
         <>
-        <Link href="/services">Go back</Link>
+        <Link href="/admin/services">Go back</Link>
         <h1>add service</h1>
-
+        
         <ToastContainer />
+ 
+
         <input type="file" onChange={handleInputChange} />
       <br />
       <br />
@@ -76,6 +81,7 @@ export default function createServices({ allCasestudies }) {
             />
             <label htmlFor="content">En title</label>
             <textarea 
+            
             className="form-control"
             name="content"
             type="text"
@@ -84,6 +90,16 @@ export default function createServices({ allCasestudies }) {
             onChange={  handleChange }
             />
              <div>
+      
+            </div>
+        
+             <div>
+             <br />
+             <br />
+             <br />
+             <br />
+            <br />
+           
             <br />
             <b>Select CaseStudies</b>
             <br />

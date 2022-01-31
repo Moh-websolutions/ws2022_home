@@ -31,7 +31,7 @@ export default function EditServices({ service, allCasestudies }) {
             setValues({
                 ...values,
                 thumbnail: [],
-                singleservices: []
+                //singleservices: []
             })
             console.log(event.target.files[0]);
         }
@@ -68,7 +68,7 @@ export default function EditServices({ service, allCasestudies }) {
 
     return (
         <>
-        <Link href="/services">Go back</Link>
+        <Link href="/admin/services">Go back</Link>
         <h1>add service</h1>
 
         <ToastContainer />
@@ -94,14 +94,14 @@ export default function EditServices({ service, allCasestudies }) {
             value={title}
             onChange={ handleChange }
             />
-            {/* <input 
+            <input 
             className="form-control"
             name="thumbnail"
             type="text"
             id="thumbnail"
             value={thumbnail}
             onChange={ handleChange }
-            /> */}
+            />
 
             <label htmlFor="content">En title</label>
             <textarea 

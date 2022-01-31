@@ -10,49 +10,34 @@ import ArrowLeft from '@strapi/icons/ArrowLeft';
 import {Tag } from '@strapi/design-system/Tag';
 import PropTypes from 'prop-types';
   
-import {
-    SubNav,
-    SubNavHeader,
-    SubNavSection,
-    SubNavSections,
-    SubNavLink,
-    SubNavLinkSection,
-    
- 
-  } from '@strapi/design-system/SubNav';
+
 
  
 
-  import {HeaderLayout, BaseHeaderLayout, ActionLayout } from '@strapi/design-system/Layout';
-  import {Button} from '@strapi/design-system/Button';
+
+
   import {ContentLayout } from '@strapi/design-system/Layout';
-  import  Link  from  'next/link';
+
+  import { Link } from '@strapi/design-system/Link';
 
 
 import Head from 'next/head';
 // import Link from "next/link";
 import AdminNav from "./AdminNav";
-import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { StaticRouter } from 'react-router-dom'
 import React from 'react';
  
-export default function AdminLayout({ children, title, description, keywords,navigationContent}) {
+import { Grid, GridItem } from '@strapi/design-system/Grid';
+import { Route } from "react-router-dom";
+import { useRouter } from 'next/router'
+ 
+
+export default function AdminLayout({ children, title, description, keywords}) {
     
-    //SubNavLink act like a Link from Nextjs 
-    const CustomLink = React.forwardRef((props, ref) => {
-        return (
-          <SubNavLink as="a" {...props} innerRef={ref}>
-            {props.children}
-          </SubNavLink>
-        );
-      });
-      CustomLink.displayName = 'CustomLink';
-      CustomLink.propTypes = {
-        children: PropTypes.node.isRequired,
-      };
+    const router = useRouter();
 
     return (
-        <StaticRouter>
+        <>
             <Head>
                 <meta charSet="utf-8" />
                 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
@@ -88,56 +73,24 @@ export default function AdminLayout({ children, title, description, keywords,nav
       
  
             </Head>
-                 
-                <ThemeProvider theme={lightTheme}>
-                    <Box background="neutral100">
-                    {/* <AdminNav /> */}
-                    <Layout sideNav={<SubNav ariaLabel="Builder sub nav"> 
-                    
-                    <img src="/images/ws-logo-full.svg" width="150" style={{
-                        margin: '25x auto',
-                        position: 'absolute',
-                        top: '25px',
-                        left: '20px',
-                    }}/>
-                    <SubNavHeader searchable value={''} onClear={() => {}} onChange={e => {}} label={``} searchLabel="Search..." />
-                    <SubNavSections>
-                        <SubNavSection label="Collection Type" collapsable>
-                    
-                            
-                        </SubNavSection>
-                        <SubNavSection label="Single Type" collapsable>
-                
-                        </SubNavSection>
-                        <SubNavSection label="collapsable" collapsable>
-                        
-                            <Link href={`/admin/service`} key={1} passHref>
-                                <CustomLink>Services</CustomLink>
-                            </Link>
-                        
-                        </SubNavSection>
-                    </SubNavSections>
-
-                    
-                </SubNav>}>
- 
+         
+            <ThemeProvider theme={lightTheme}>
                 <Box background="neutral100">
-                    <HeaderLayout primaryAction={<Button startIcon={<Plus />}>Add an entry</Button>} navigationAction={<Link startIcon={<ArrowLeft />} href="/services">
-                    <a> Go back</a>
-                    </Link>} title="Other CT" subtitle="36 entries found" as="h2" />
-                </Box>
-                
-                <ContentLayout>
-                     {children}
-                </ContentLayout>           
-            
-                </Layout>
+                    <Layout > 
+                        <Grid gap={0}>
+                            <AdminNav />
+                            <GridItem col={11}>
+                                
+                                <ContentLayout>
+                                    {children}
+                                </ContentLayout>
+                            </GridItem>
+                        </Grid>  
+                    </Layout>
                 </Box>     
-                
-                
             </ThemeProvider>       
 
-        </StaticRouter>
+        </>
     
     )
 }

@@ -7,6 +7,18 @@ import {
     NavUser,
     NavLink,
   } from '@strapi/design-system/MainNav';
+  import {
+    SubNav,
+    SubNavHeader,
+    SubNavSection,
+    SubNavSections,
+    SubNavLink,
+    SubNavLinkSection,
+    
+ 
+  } from '@strapi/design-system/SubNav';
+
+  import { Grid, GridItem } from '@strapi/design-system/Grid';
 import {Box} from '@strapi/design-system/Box';
 import {Divider } from '@strapi/design-system/Divider';
 import {Icon} from '@strapi/design-system/Icon';
@@ -22,55 +34,130 @@ import {Link} from '@strapi/design-system/Link';
 import { useState } from 'react';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { StaticRouter } from 'react-router-dom'
+import React from 'react';
+import PropTypes from 'prop-types';
+import { useRouter } from 'next/router'
 
-
-export default function AdminNav() {
+export default function AdminNav({navigationContent, subNavigationContent, children}) {
      
     const [condensed, setCondensed] = useState(false);
+    const router = useRouter();
+    //SubNavLink act like a Link from Nextjs 
+    const CustomLink = React.forwardRef((props, ref) => {
+        return (
+          <SubNavLink as="a" {...props} innerRef={ref}>
+            {props.children}
+          </SubNavLink>
+        );
+      });
+      
+      CustomLink.displayName = 'CustomLink';
+      
+      CustomLink.propTypes = {
+        children: PropTypes.node.isRequired,
+      };
+ 
 
     return (
+        <StaticRouter>
+        <Grid gap={0}>
+            <GridItem col={1}>
+                <Box background="neutral0" padding={0} style={{ height: '100vh'}}>
+                    <MainNav condensed={condensed}>
+                    <NavBrand workplace="Workplace" title="Strapi Dashboard" icon={<img src="/ws-logo-w-2.svg" alt="" />} />
+                    <Divider />
+                    <NavSections>
+                    
+                        <NavLink to="/cm" icon={<Write />} className="active">
+                        Content Manager
+                        </NavLink>
+                        <NavSection label="Plugins">
+                        <NavLink to="/builder" icon={<Layer />}>
+                            Builder
+                        </NavLink>
+                        <NavLink to="/content" icon={<Landscape />}>
+                            Media library
+                        </NavLink>
+                        <NavLink to="/content" icon={<Information />}>
+                            Documentation
+                        </NavLink>
+                        </NavSection>
+                        <NavSection label="General">
+                        <NavLink to="/builder" icon={<Puzzle />}>
+                            Plugins
+                        </NavLink>
+                        <NavLink to="/content" icon={<ShoppingCart />}>
+                            Marketplace
+                        </NavLink>
+                        <NavLink to="/content" icon={<Cog />}>
+                            Settings
+                        </NavLink>
+                        </NavSection>
+                    </NavSections>
+                    <NavUser src="https://avatars.githubusercontent.com/u/3874873?v=4" to="/somewhere-i-belong">
+                        John Duff
+                    </NavUser>
+                    <NavCondense onClick={() => setCondensed(s => !s)}>
+                        {condensed ? 'Expanded the navbar' : 'Collapse the navbar'}
+                    </NavCondense>
+                    </MainNav>
+                </Box>
+            </GridItem>
+
+            <GridItem col={1}>
+            <SubNav ariaLabel="Mixed sub nav">
+                <SubNavHeader label="Services content" />
+                <SubNavSections>
+                    <SubNavSection label="COLLECTION TYPES" collapsable>
+                        <SubNavLink className="active" onClick={() => router.push('/admin/services')} to="/services" icon={<Write />}>
+                            Services
+                        </SubNavLink>
+                        <SubNavLink  onClick={() => router.push('/admin/casestudies')} to="/casestudies" icon={<Write />}>
+                            Casestudies
+                        </SubNavLink>
+                        <SubNavLink to="/today" icon={<Write />}>
+                            Team
+                        </SubNavLink>
+                        <SubNavLink to="/today" icon={<Write />}>
+                            CTA
+                        </SubNavLink>
+                        
+                    </SubNavSection>
+                    
+                    <SubNavSection label="SINGLE TYPES" collapsable>
+                        <SubNavLink className="active" onClick={() => router.push('/admin/services')} to="/services" icon={<Write />}>
+                            Home page
+                        </SubNavLink>
+                        <SubNavLink  onClick={() => router.push('/admin/casestudies')} to="/casestudies" icon={<Write />}>
+                            About page
+                        </SubNavLink>
+                        <SubNavLink to="/today" icon={<Write />}>
+                            Contact page
+                        </SubNavLink>
+                     
+                    </SubNavSection>
+                </SubNavSections>
+            </SubNav>
+            </GridItem>
+
+        </Grid>
+         <style global jsx>{`
  
-     <MainNav condensed={condensed}>
-        <NavBrand workplace="Workplace" title="Strapi Dashboard" icon={<img src="/ws-logo-w-2.svg" alt="" />} />
-        <Divider />
-        <NavSections>
-        <Link to="/today" ><a>LINK</a></Link>
-            <NavLink to="/cm" icon={<Write />} className="active">
-            Content-type-builder
-            </NavLink>
-            <NavSection label="Plugins">
-            <NavLink to="/builder" icon={<Layer />}>
-                Builder
-            </NavLink>
-            <NavLink to="/content" icon={<Landscape />}>
-                Media library
-            </NavLink>
-            <NavLink to="/content" icon={<Information />}>
-                Documentation
-            </NavLink>
-            </NavSection>
-            <NavSection label="General">
-            <NavLink to="/builder" icon={<Puzzle />}>
-                Plugins
-            </NavLink>
-            <NavLink to="/content" icon={<ShoppingCart />}>
-                Marketplace
-            </NavLink>
-            <NavLink to="/content" icon={<Cog />}>
-                Settings
-            </NavLink>
-            </NavSection>
-        </NavSections>
-        <NavUser src="https://avatars.githubusercontent.com/u/3874873?v=4" to="/somewhere-i-belong">
-            John Duff
-        </NavUser>
-        <NavCondense onClick={() => setCondensed(s => !s)}>
-            {condensed ? 'Expanded the navbar' : 'Collapse the navbar'}
-        </NavCondense>
-        </MainNav>
-  
-  
+            .cRfLrF {
+                padding-bottom: 0!important;
+            }
+        
+        `}</style>
+         </StaticRouter>
     )
 }
 
- 
+AdminNav.propTypes = {
+    title: PropTypes.string.isRequired,
+    pages: PropTypes.arrayOf(
+      PropTypes.shape({
+        link: PropTypes.string,
+        name: PropTypes.string,
+      }).isRequired,
+    ),
+  };

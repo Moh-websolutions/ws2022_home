@@ -7,14 +7,16 @@ import { Icon } from '@strapi/design-system/Icon';
 import Plus from '@strapi/icons/Plus';
 import {IconButton} from '@strapi/design-system/IconButton';
 import Pencil from '@strapi/icons/Pencil';
+import ArrowLeft from '@strapi/icons/ArrowLeft';
 import Trash from '@strapi/icons/Trash';
 import {Flex} from '@strapi/design-system/Flex';
 import{BaseCheckbox } from '@strapi/design-system/BaseCheckbox';
 import {VisuallyHidden} from '@strapi/design-system/VisuallyHidden';
 import {Avatar} from '@strapi/design-system/Avatar';
+import {HeaderLayout, BaseHeaderLayout, ActionLayout } from '@strapi/design-system/Layout';
+import {Button} from '@strapi/design-system/Button';
 
-
-import Link from 'next/link';
+import {Link} from  '@strapi/design-system/Link';
 import Image from 'next/image';
 import AdminLayout from "@/components/admin/AdminLayout"
 import { API_URL } from "url.config"
@@ -24,30 +26,34 @@ import 'react-toastify/dist/ReactToastify.css';
 
 export default function Services({ services,singleservice }) {
     // services = services.sort(() => Math.random() - 0.5)
-    console.log(services)
-    const router = useRouter();
-    {services.data.map (singleservice => {
-        singleservice =  singleservice.id  
-        console.log(singleservice)
-    })}
-    
-  
+    console.log(services.data);
 
-    const ROW_COUNT = 6;
-    const COL_COUNT = 10;
-    const entry = {
-      cover: 'https://avatars.githubusercontent.com/u/3874873?v=4',
-      description: 'Chez Léon is a human sized Parisian',
-      category: 'French cuisine',
-      contact: 'Leon Lafrite'
-    };
-    const entries = [];
+    const router = useRouter();
+
+    // {services.data.map (singleservice => {
+    //     singleservice =  singleservice.id  
+    //     console.log(singleservice)
+    // })}
+    
+    // get the page name
+    const PAGENAME = router.pathname.split('/')[2];
+    const SERVICES_COUNT = services.data.length;
+
+    // const ROW_COUNT = 6;
+    // const COL_COUNT = 10;
+    // const entry = {
+    //   cover: 'https://avatars.githubusercontent.com/u/3874873?v=4',
+    //   description: 'Chez Léon is a human sized Parisian',
+    //   category: 'French cuisine',
+    //   contact: 'Leon Lafrite'
+    // };
+    // const entries = [];
   
-    for (let i = 0; i < 5; i++) {
-      entries.push({ ...entry,
-        id: i
-      });
-    }
+    // for (let i = 0; i < 5; i++) {
+    //   entries.push({ ...entry,
+    //     id: i
+    //   });
+    // }
 
     
     return (
@@ -55,10 +61,25 @@ export default function Services({ services,singleservice }) {
         <AdminLayout title={"Services | websolutions.ca"}>
             <>
             <ToastContainer />
- 
+            <Box background="neutral100" padding={0}>
+                    <HeaderLayout 
+                    primaryAction={<Button startIcon={<Plus />}
+                    onClick={() => 
+                        router.push(`/admin/services/create2`)
+                    }>Add an entry</Button>} 
+
+                    navigationAction={<Link startIcon={<ArrowLeft />} TO="/services"
+                    onClick={() => router.back()}
+                    >  
+                    <a> Go back</a>
+                    </Link>} title={PAGENAME} subtitle={SERVICES_COUNT + " entries found"} as="h2" />
+                </Box>
             <ThemeProvider theme={lightTheme}>
+ 
+                
+         
              <Box padding={12} background="neutral100">
-                <Table colCount={COL_COUNT} rowCount={ROW_COUNT} footer={<TFooter icon={<Plus />}>Add another field to this collection type</TFooter>}>
+                <Table colCount={10} rowCount={6} footer={<TFooter icon={<Plus />}>Add another field to this collection type</TFooter>}>
                     <Thead>
                     <Tr>
                         <Th>

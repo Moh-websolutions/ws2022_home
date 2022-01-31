@@ -8,10 +8,14 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import draftToHtml from 'draftjs-to-html';
 
 export default function SingleService( {service} ) {
     //  {console.log(service.attributes.thumbnail.data.attributes.url)}
+
+
+    const body = draftToHtml(JSON.parse(service.attributes.content));
+
     const router = useRouter();
 
     const deleteService = async () => {
@@ -93,7 +97,9 @@ export default function SingleService( {service} ) {
                        </div>
                        <div className="col-lg-7 offset-lg-1 order-1 custome_content">
                 
-                       <ReactMarkdown escapeHtml={false}>{service.attributes.content}</ReactMarkdown>
+                       {/* <ReactMarkdown escapeHtml={false}>{service.attributes.content}</ReactMarkdown> */}
+                            {/* {service.attributes.content} */}
+                            <div dangerouslySetInnerHTML={{__html: body}}></div>
                             <div className="cms-group mt-5">
                                <h3 className="mt-0 mb-2 font-weight-bold">Related case studies</h3>
                                <a href="#\" className="mr-1">

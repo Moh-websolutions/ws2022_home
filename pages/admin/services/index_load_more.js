@@ -30,60 +30,113 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import { useState } from "react";
 
-export default function Services({ services, page }) {
-    console.log(services.meta.pagination.total + " total services");
+export default function Services({ all_data }) {
+    // services = services.sort(() => Math.random() - 0.5)
+    console.log(all_data.meta.pagination.pageCount);
 
     const router = useRouter();
     
 
+    // increase page number by 1
+    // Declare a new state variable, which we'll call "count"
+    
+    // {services.data.map (singleservice => {
+        //     singleservice =  singleservice.id  
+        //     console.log(singleservice)
+        // })}
+        
         // get the page name
         const PAGENAME = router.pathname.split('/')[2];
-        const SERVICES_COUNT = services.meta.pagination.total;
+        const SERVICES_COUNT = all_data.meta.pagination.total;
+        
+        // const ROW_COUNT = 6;
+        // const COL_COUNT = 10;
+        // const entry = {
+            //   cover: 'https://avatars.githubusercontent.com/u/3874873?v=4',
+            //   description: 'Chez Léon is a human sized Parisian',
+            //   category: 'French cuisine',
+            //   contact: 'Leon Lafrite'
+            // };
+            // const entries = [];
+            
+            // for (let i = 0; i < 5; i++) {
+                //   entries.push({ ...entry,
+                //     id: i
+                //   });
+                // }
+                
+        const [services, setServices] = useState(all_data);
+        // load next 3 services
+        const getMorePosts = async () => {
+            const res = await fetch(`http://localhost:1337/api/services?populate=*&pagination[start]=${services.data.length}&pagination[limit]=2`);
+
+            const newPosts = await res.json();
+            setServices ({
+                data: [...services.data, ...newPosts.data],
+                meta: newPosts.meta
+            });
+
+           
        
-        // get the last 
-        const lastPage = Math.ceil(services.meta.pagination.total / 3);
+             console.log(newPosts);
+             return newPosts;
+        };
+
  
-        // create an array containing the page numbers
+      // create an array containing the page numbers
         const pageNumbers = [];
 
-        for (let i = 1; i <= lastPage; i++) {
+        for (let i = 1; i <= all_data.meta.pagination.pageCount; i++) {
             pageNumbers.push(i);
         }
-  
+       console.log(pageNumbers);
+ 
 
             
     return (
     //    <>
     //    {services.data.map (service => ( 
     //         <div key={service.id}>
-    //         <p>{service.id}- {service.attributes.title}</p>
-         
+    //         <p>{service.id}</p>
+    //         <p>{service.attributes.title}</p>
     //         </div>
-    //     ))
-    //     }
-
-    //     <button onClick={() => { router.push(`/admin/services?page=${page - 1}`) }}
-    //     disabled={page <= 1} >previous </button>
-    //     <button onClick={() => { router.push(`/admin/services?page=${page + 1}`) }}
-    //     disabled={page >= lastPage} >next </button>
-           
+    //     ))}
     //     {
     //          // pagination from getMorePosts
     //         <div>
+    //           <a href="" 
+    //             onClick={(e) => {
+    //                 e.preventDefault();
+    //                 getMorePosts();
+    //             }}
+    //           >
+    //             <ArrowLeft />
+    //           </a>
+           
     //             {
    
     //                 pageNumbers.map(number => (
     //                     <li key={number}>
-    //                         <a href=""  
-    //                         onClick={(e) => {
+    //                         <a href="" onClick={(e) => {
     //                             e.preventDefault();
-    //                             router.push(`/admin/services?page=${number}`);
-    //                         }}>
+    //                             getMorePosts(number);
+ 
+                                 
+    //                         }
+    //                         }>
     //                             {number}
     //                         </a>
     //                     </li>
     //                 ))
+
+                    
+
     //             }
+
+                
+                
+
+                
     //         </div>
 
     //     }
@@ -108,7 +161,7 @@ export default function Services({ services, page }) {
                 </Box>
             <ThemeProvider theme={lightTheme}>
              <Box centered  padding={12} background="neutral100" >
-             <Table colCount={10} rowCount={6} footer={<TFooter  icon={<Plus />} onClick={() => router.push(`/admin/services/create`) }>Add another field to this collection type</TFooter>}>
+                <Table colCount={10} rowCount={6} footer={<TFooter icon={<Plus />}>Add another field to this collection type</TFooter>}>
                     <Thead>
                     <Tr>
                         <Th>
@@ -197,37 +250,21 @@ export default function Services({ services, page }) {
                 </Table>
                 </Box>
                 {
+                    // load more button
+                     services.data.length > 0 && services.data.length < services.meta.pagination.total ? // if there are more posts
 
                     <Box padding={12}  background="neutral100"  className="d-flex align-items-center justify-content-center mt-4">
-                          
-                    <Pagination activePage={page} pageCount={lastPage}>
-                        <PreviousLink 
-                        onClick={() => { router.push(`/admin/services?page=${page - 1}`) }}
-                        to={`/admin/services?page=${page - 1}`}
-                        >Go to previous page</PreviousLink>
-                        {   
-                            pageNumbers.map(number =>  (
-                                <PageLink 
-                                    number={number}
-                                    key={number}  
-                                    to={`/${number}`} 
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        router.push(`/admin/services?page=${number}`);
-                                    }}
-                                    >
-                                    {number}
-                                </PageLink>
-                            ))
-                        }
-                         
-                        <NextLink 
-                        onClick={() => { router.push(`/admin/services?page=${page + 1}`) }}
-                         to={`/admin/services?page=${page + 1}`} >
-                        Go to next page</NextLink>
-                        </Pagination>
+                         <Button size="L"  variant='tertiary'  startIcon={<More />}  onClick={getMorePosts}>
+                            Load More
+                        </Button>
                      </Box>
-              
+                     :
+                     
+                    <Box padding={12}   background="neutral100"  className="d-flex align-items-center justify-content-center mt-4">
+                        <Button size="L"  disabled variant='default'  startIcon={<More />}  onClick={getMorePosts}>
+                        No more {PAGENAME} to load 
+                    </Button>
+                    </Box>
                 }
             </ThemeProvider>
  
@@ -239,16 +276,12 @@ export default function Services({ services, page }) {
     )
 }
 
-export async function getServerSideProps({query: {page = 1}}) {
-    const start = +page === 1 ? 0 : (+page - 1) * 3;
+export async function getStaticProps(){
  
-    const res = await fetch(`http://localhost:1337/api/services?populate=*&pagination[start]=${start}&pagination[limit]=3&fields=title&sort=title:desc`)
-    const data = await res.json();
+    const res = await fetch(`http://localhost:1337/api/services?populate=*&?pagination[page]=1&pagination[pageSize]=2&fields=title&sort=title:desc`)
+    const all_data = await res.json();
     return {
-        props: {
-        services: data,
-        //page: parseInt(page),// convert string to number
-        page: +page,// convert string to number
-    },
- }
+        props: {all_data },
+        revalidate: 1
+    }
 }

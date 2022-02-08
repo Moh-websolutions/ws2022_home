@@ -5,6 +5,7 @@ import { API_URL } from "url.config"
 
 export default function Services({ services }) {
     // services = services.sort(() => Math.random() - 0.5)
+    console.log(services);
     return (
         <Layout title={"Services | websolutions.ca"} services={services}>
             <>
@@ -22,7 +23,7 @@ export default function Services({ services }) {
                                     {services.data.map (service => (
                                           console.log(service.attributes),
                                         <div className="headline-content solution-link" key={service.id}>
-                                        <Link  href={`/services/${service.id}`}>
+                                        <Link  href={`/services/${service.attributes.slug}`}>
                                             <a>
                                                 <h1 className="headline-title display-3">{service.attributes.title}</h1>
                                                 <p className="headline-subtitle">{service.attributes.desc}</p>

@@ -149,9 +149,14 @@ export default function Services({ services, page }) {
                         <Td>
                             <Typography textColor="neutral800">{service.attributes.subtitle}</Typography>
                         </Td>
-                        <Td>
-                            <Avatar src={`${service.attributes.thumbnail.data.attributes.url} `} alt={service.attributes.title} />
-                        </Td>
+                        <Td>{console.log(service.attributes.cover)} 
+                            {
+                            service.attributes.thumbnail.data  !=null ?
+                           <Avatar src={service.attributes.thumbnail.data.attributes.url} alt={service.attributes.title} />
+                            :
+                            <Avatar src="/images/default-cover.png" />
+                            }   
+                         </Td>
                         
                         <Td>
                             <Typography textColor="neutral800">{service.attributes.locale}</Typography>
@@ -242,7 +247,7 @@ export default function Services({ services, page }) {
 export async function getServerSideProps({query: {page = 1}}) {
     const start = +page === 1 ? 0 : (+page - 1) * 3;
  
-    const res = await fetch(`http://localhost:1337/api/services?populate=*&pagination[start]=${start}&pagination[limit]=3&fields=title&sort=title:desc`)
+    const res = await fetch(`http://localhost:1337/api/services?populate=*&pagination[start]=${start}&pagination[limit]=3&fields=id&sort=id:DESC`);
     const data = await res.json();
     return {
         props: {

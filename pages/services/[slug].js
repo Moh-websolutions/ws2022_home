@@ -5,17 +5,14 @@ import moment from  "moment"
 import ReactMarkdown from "react-markdown";
 import { API_URL } from 'url.config';
 import Link from "next/link";
+import { fetchAPI } from "../../lib/api";
 import { useRouter } from "next/router";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import draftToHtml from 'draftjs-to-html';
+
 
 export default function SingleService( {service} ) {
-    //  {console.log(service.attributes.thumbnail.data.attributes.url)}
-
-
-    const body = draftToHtml(JSON.parse(service.attributes.content));
-
+      {console.log(service.attributes)}
     const router = useRouter();
 
     const deleteService = async () => {
@@ -97,9 +94,7 @@ export default function SingleService( {service} ) {
                        </div>
                        <div className="col-lg-7 offset-lg-1 order-1 custome_content">
                 
-                       {/* <ReactMarkdown escapeHtml={false}>{service.attributes.content}</ReactMarkdown> */}
-                            {/* {service.attributes.content} */}
-                            <div dangerouslySetInnerHTML={{__html: body}}></div>
+                       <ReactMarkdown escapeHtml={false}>{service.attributes.content}</ReactMarkdown>
                             <div className="cms-group mt-5">
                                <h3 className="mt-0 mb-2 font-weight-bold">Related case studies</h3>
                                <a href="#\" className="mr-1">
@@ -169,29 +164,69 @@ export default function SingleService( {service} ) {
 // }
 
 
+// export async function getServerSideProps({params}){
+//     const res = await fetch(`http://localhost:1337/api/services/${params.slug}`);
+//     const services = await res.json();
+//     const service = services[0];
+//     return {
+//         props: {service}
+//     }
+// }
+
+
+
+
+//  export async function getStaticPaths() {
+//     const res = await fetch(`http://localhost:1337/api/services?populate=*`)
+//     const services = await res.json()
+  
+//     return {
+//       paths: services.data.map((service) => ({
+//         params: { id: service.id.toString() },
+//       })),
+//       fallback: false,
+//     }
+//   }
+
+
+// // for each individual page/path : get the data for the path/page
+// export async function getStaticProps({params}) {
+
+//     const { id } = params
+//     const res = await fetch(`http://localhost:1337/api/services/${id}?populate=*`);
+//     const services = await res.json();
+//     const service = services.data;
+//     return {
+//         props: {service}
+//     }
+// }
 
 
 export async function getStaticPaths() {
-    const res = await fetch(`http://localhost:1337/api/services?populate=*`)
-    const services = await res.json()
+    const services = await fetchAPI("/services?populate=*", { fields: ["slug"] });
   
     return {
       paths: services.data.map((service) => ({
-        params: { id: service.id.toString() },
+        params: {
+          slug: service.attributes.slug,
+          populate: ["*"]
+        },
       })),
       fallback: false,
-    }
+    };
   }
-
-
-// for each individual page/path : get the data for the path/page
-export async function getStaticProps({params}) {
-
-    const { id } = params
-    const res = await fetch(`http://localhost:1337/api/services/${id}?populate=*`);
-    const services = await res.json();
-    const service = services.data;
+  
+  export async function getStaticProps({ params }) {
+    const services = await fetchAPI("/services", {
+      filters: {
+        slug: params.slug,
+      },
+      populate: [ "thumbnail"],
+       
+    });
+  
     return {
-        props: {service}
-    }
-}
+      props: { service: services.data[0] },
+      revalidate: 1,
+    };
+  }
